@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./index.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ADMIN PANEL</small></span></a>
+    <button id="logoutButton" class="btn btn-outline">लॉगआउट</button>
+  </header>
+  <main style="max-width:950px;margin:auto;padding:40px 5%">
+    <span class="section-kicker">ADMINISTRATION</span>
+    <h1 style="margin:12px 0">स्टूडेंट मैनेजमेंट</h1>
+    <p style="color:var(--muted)">यह शुरुआती एडमिन पेज है। अकाउंट बनाने और अनुमति देने का पूरा इंटरफेस अभी नहीं जुड़ा है।</p>
+    <section id="adminContent" style="margin-top:25px;padding:22px;background:var(--panel);border:1px solid var(--border);border-radius:15px">
+      एडमिन की पहचान जाँची जा रही है...
+    </section>
+  </main>
+  <script type="module">
+    import { auth, db, authReady } from "./firebase.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    try {
+      await authReady;
+      if (!auth.currentUser) {
+        location.replace("./login.html");
+      } else {
+        const snap = await getDoc(doc(db, "users", auth.currentUser.uid));
+        if (!snap.exists() || snap.data().role !== "admin" || snap.data().status !== "active") {
+          await signOut(auth);
+          location.replace("./login.html");
+        } else {
+          document.getElementById("adminContent").textContent =
+            "स्वागत है, " + (snap.data().name || "Admin") +
+            "। स्टूडेंट मैनेजमेंट फीचर अगले चरण में जोड़ा जाएगा।";
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      document.getElementById("adminContent").textContent =
+        "एडमिन पेज लोड नहीं हुआ। Firebase सेटिंग और सुरक्षा नियम जाँचें।";
+    }
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      await signOut(auth);
+      location.replace("./login.html");
+    });
+  </script>
+</body>
+</html>

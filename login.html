@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>Login | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .auth-wrap{min-height:calc(100vh - 82px);display:grid;place-items:center;padding:45px 20px;background:radial-gradient(ellipse at 50% 20%,#596cff18,transparent 55%)}
+    .auth-card{width:100%;max-width:440px;padding:34px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,#151e33,#0f1628);box-shadow:0 25px 80px #0003}
+    .auth-logo{width:58px;height:58px;margin:0 auto 18px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,#6476ff,#a25dff);font-size:25px;font-weight:800}
+    .auth-card h1{text-align:center;font-size:25px;margin-bottom:7px}
+    .auth-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:25px}
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:12px;background:#090e1b;margin-bottom:24px}
+    .auth-tab{border:0;border-radius:9px;padding:11px;color:var(--muted);background:transparent;cursor:pointer;font-weight:700}
+    .auth-tab.active{color:#fff;background:#252e4c}
+    .field{margin-bottom:17px}
+    .field label{display:block;font-size:12px;margin-bottom:7px;color:#d9def0}
+    .field input{width:100%;padding:13px 14px;border:1px solid #ffffff18;border-radius:10px;outline:none;background:#0b1120;color:white;font:inherit;font-size:13px}
+    .field input:focus{border-color:#7887ff;box-shadow:0 0 0 3px #7887ff16}
+    .auth-submit{width:100%;border:0;margin-top:6px}
+    .auth-message{display:none;padding:12px;border-radius:10px;font-size:12px;line-height:1.7;margin-bottom:16px;overflow-wrap:anywhere}
+    .auth-message.show{display:block}
+    .auth-message.error{color:#ffb9c2;background:#ff647b12;border:1px solid #ff647b30}
+    .auth-message.success{color:#8af0c5;background:#46d8a512;border:1px solid #46d8a530}
+    .auth-foot{text-align:center;color:var(--muted);font-size:11px;margin-top:21px}
+    .back-home{display:block;text-align:center;margin-top:18px;color:#b6bfff;font-size:12px}
+    @media(max-width:480px){.auth-card{padding:25px 20px}.auth-wrap{min-height:calc(100vh - 70px)}}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./index.html">
+      <span class="brand-icon">J</span>
+      <span>JAY <b>COMPUTER</b><small>ACADEMY</small></span>
+    </a>
+    <a class="btn btn-outline" href="./index.html">होम पर जाएँ</a>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <div class="auth-logo">J</div>
+      <h1 id="formTitle">वापस स्वागत है!</h1>
+      <p class="auth-sub" id="formSubtitle">अपने अकाउंट में लॉगिन करें</p>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="loginTab">लॉगिन</button>
+        <button type="button" class="auth-tab" id="signupTab">नया अकाउंट</button>
+      </div>
+
+      <div id="message" class="auth-message" role="status" aria-live="polite"></div>
+
+      <form id="authForm">
+        <div class="field" id="nameField" hidden>
+          <label for="name">पूरा नाम</label>
+          <input id="name" type="text" autocomplete="name" maxlength="80" placeholder="अपना पूरा नाम लिखें">
+        </div>
+
+        <div class="field">
+          <label for="email">ईमेल एड्रेस</label>
+          <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+        </div>
+
+        <div class="field">
+          <label for="password">पासवर्ड</label>
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="कम से कम 6 अक्षर">
+        </div>
+
+        <button class="btn btn-primary auth-submit" id="submitButton" type="submit">
+          लॉगिन करें →
+        </button>
+      </form>
+
+      <p class="auth-foot">सिर्फ अधिकृत स्टूडेंट और एडमिन ही कोर्स एक्सेस कर सकते हैं।</p>
+      <a href="./index.html" class="back-home">← मुख्य पेज पर वापस जाएँ</a>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth, db, authReady } from "./firebase.js";
+    import {
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import {
+      doc, getDoc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    const $ = id => document.getElementById(id);
+    let mode = "login";
+    const form = $("authForm");
+    const message = $("message");
+    const submitButton = $("submitButton");
+
+    function showMessage(text, type = "error") {
+      message.textContent = text;
+      message.className = "auth-message show " + type;
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const signup = mode === "signup";
+      $("loginTab").classList.toggle("active", !signup);
+      $("signupTab").classList.toggle("active", signup);
+      $("nameField").hidden = !signup;
+      $("name").required = signup;
+      $("password").autocomplete = signup ? "new-password" : "current-password";
+      $("formTitle").textContent = signup ? "अपना अकाउंट बनाएँ" : "वापस स्वागत है!";
+      $("formSubtitle").textContent = signup
+        ? "रजिस्ट्रेशन के लिए अपनी जानकारी भरें"
+        : "अपने अकाउंट में लॉगिन करें";
+      submitButton.textContent = signup ? "अकाउंट बनाएँ →" : "लॉगिन करें →";
+      message.className = "auth-message";
+    }
+
+    $("loginTab").addEventListener("click", () => setMode("login"));
+    $("signupTab").addEventListener("click", () => setMode("signup"));
+
+    function friendlyError(error) {
+      const code = error?.code || "";
+      const messages = {
+        "auth/api-key-not-valid.-please-pass-a-valid-api-key.":
+          "Firebase API key सही नहीं है। firebase.js में अपने Web App का सही config जाँचें।",
+        "auth/invalid-api-key":
+          "Firebase API key गलत है। Firebase Console से config दोबारा कॉपी करें।",
+        "auth/invalid-credential":
+          "ईमेल या पासवर्ड गलत है। दोनों दोबारा जाँचें।",
+        "auth/invalid-email":
+          "ईमेल एड्रेस सही फॉर्मेट में लिखें।",
+        "auth/user-not-found":
+          "इस ईमेल से अकाउंट नहीं मिला।",
+        "auth/wrong-password":
+          "पासवर्ड गलत है।",
+        "auth/email-already-in-use":
+          "इस ईमेल से पहले ही अकाउंट बना हुआ है। लॉगिन करें।",
+        "auth/weak-password":
+          "पासवर्ड कम से कम 6 अक्षरों का रखें।",
+        "auth/operation-not-allowed":
+          "Firebase Console में Email/Password sign-in चालू करें।",
+        "auth/network-request-failed":
+          "इंटरनेट कनेक्शन जाँचें और फिर कोशिश करें.",
+        "permission-denied":
+          "Firestore ने इस काम की अनुमति नहीं दी। Database Rules जाँचें।"
+      };
+      return messages[code] || error?.message || "अभी काम पूरा नहीं हुआ। कृपया दोबारा कोशिश करें।";
+    }
+
+    async function routeUser(user) {
+      const profileRef = doc(db, "users", user.uid);
+      const profileSnap = await getDoc(profileRef);
+
+      if (!profileSnap.exists()) {
+        await auth.signOut();
+        throw new Error(
+          "इस अकाउंट की स्टूडेंट प्रोफाइल नहीं मिली। एडमिन को Firebase Firestore में users/" +
+          user.uid + " प्रोफाइल बनानी होगी।"
+        );
+      }
+
+      const profile = profileSnap.data();
+
+      if (profile.status !== "active") {
+        await auth.signOut();
+        throw new Error("तुम्हारा अकाउंट अभी सक्रिय नहीं है। एडमिन से संपर्क करो।");
+      }
+
+      if (profile.role === "admin") {
+        window.location.replace("./students.html");
+      } else if (profile.role === "student") {
+        window.location.replace("./dashboard.html");
+      } else {
+        await auth.signOut();
+        throw new Error("इस अकाउंट का role सही नहीं है। एडमिन से संपर्क करो।");
+      }
+    }
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      message.className = "auth-message";
+      submitButton.disabled = true;
+      submitButton.textContent = "कृपया प्रतीक्षा करें...";
+
+      try {
+        await authReady;
+        const email = $("email").value.trim();
+        const password = $("password").value;
+
+        if (mode === "login") {
+          const credential = await signInWithEmailAndPassword(auth, email, password);
+          await routeUser(credential.user);
+        } else {
+          const name = $("name").value.trim();
+          if (name.length < 2) {
+            throw new Error("अपना पूरा नाम कम से कम 2 अक्षरों में लिखें।");
+          }
+
+          const credential = await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(credential.user, { displayName: name });
+
+          // Public sign-up does not grant student access.
+          // An admin must approve the account and create its Firestore profile.
+          await auth.signOut();
+
+          setMode("login");
+          $("email").value = email;
+          showMessage(
+            "अकाउंट बन गया है। अभी स्टूडेंट एक्सेस चालू नहीं है। एडमिन को Firebase Console में users collection के अंदर तुम्हारी UID पर प्रोफाइल बनाकर role=student और status=active सेट करना होगा।",
+            "success"
+          );
+        }
+      } catch (error) {
+        showMessage(friendlyError(error));
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = mode === "signup" ? "अकाउंट बनाएँ →" : "लॉगिन करें →";
+      }
+    });
+  </script>
+</body>
+</html>

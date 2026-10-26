@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Details | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .page-wrap{max-width:950px;margin:auto;padding:45px 5%}
+    .course-intro,.lesson-row{padding:20px;border:1px solid var(--border);border-radius:15px;background:var(--panel)}
+    .lesson-list{display:grid;gap:12px;margin-top:22px}
+    .lesson-row{display:flex;align-items:center;justify-content:space-between;gap:15px}
+    .lesson-row h3{font-size:14px}
+    .lesson-row p{font-size:11px;color:var(--muted);margin-top:5px}
+    @media(max-width:550px){.lesson-row{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" href="./courses.html">सभी कोर्स</a>
+  </header>
+
+  <main class="page-wrap">
+    <div id="courseContent"><p class="muted">कोर्स लोड हो रहा है...</p></div>
+  </main>
+
+  <script type="module">
+    import { requireStudent } from "./app.js";
+    import { getCourse } from "./course-data.js";
+
+    const session = await requireStudent();
+
+    if (session) {
+      const id = new URLSearchParams(location.search).get("id");
+      const course = getCourse(id);
+      const root = document.getElementById("courseContent");
+
+      if (!course) {
+        root.textContent = "यह कोर्स नहीं मिला।";
+      } else {
+        const intro = document.createElement("section");
+        intro.className = "course-intro";
+
+        const kicker = document.createElement("span");
+        kicker.className = "section-kicker";
+        kicker.textContent = course.title;
+
+        const heading = document.createElement("h1");
+        heading.style.margin = "12px 0";
+        heading.textContent = course.hindi;
+
+        const description = document.createElement("p");
+        description.className = "muted";
+        description.textContent = course.description;
+
+        const count = document.createElement("p");
+        count.className = "muted";
+        count.style.marginTop = "10px";
+        count.textContent = `कुल लेसन: ${course.lessons.length}`;
+
+        intro.append(kicker, heading, description, count);
+
+        const heading2 = document.createElement("h2");
+        heading2.style.marginTop = "28px";
+        heading2.textContent = "कोर्स के लेसन";
+
+        const list = document.createElement("section");
+        list.className = "lesson-list";
+
+        course.lessons.forEach((lesson, index) => {
+          const row = document.createElement("article");
+          row.className = "lesson-row";
+
+          const info = document.createElement("div");
+          const title = document.createElement("h3");
+          title.textContent = `${index + 1}. ${lesson}`;
+          const sub = document.createElement("p");
+          sub.textContent = "थ्योरी और सीखने के चरण";
+
+          info.append(title, sub);
+
+          const link = document.createElement("a");
+          link.className = "btn btn-outline";
+          link.href = `./lesson.html?course=${encodeURIComponent(course.id)}&lesson=${index}`;
+          link.textContent = "लेसन खोलें →";
+
+          row.append(info, link);
+          list.append(row);
+        });
+
+        root.replaceChildren(intro, heading2, list);
+      }
+    }
+  </script>
+</body>
+</html>

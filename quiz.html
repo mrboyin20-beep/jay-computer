@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Computer Quiz | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .quiz-page{max-width:800px;margin:auto;padding:40px 5%}
+    .question{padding:20px;margin:16px 0;border:1px solid var(--border);border-radius:15px;background:var(--panel)}
+    .question h3{font-size:15px;margin-bottom:12px}
+    .option{display:block;padding:9px 0;color:#c7d0e3;font-size:13px}
+    .quiz-result{padding:18px;background:#1b2540;border-radius:12px;margin-top:20px}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" href="./dashboard.html">डैशबोर्ड</a>
+  </header>
+
+  <main class="quiz-page">
+    <span class="section-kicker">KNOWLEDGE CHECK</span>
+    <h1 style="margin:12px 0">कंप्यूटर बेसिक क्विज</h1>
+    <p style="color:var(--muted)">सभी प्रश्नों के उत्तर चुनकर सबमिट करो।</p>
+
+    <form id="quizForm">
+      <div id="questions"></div>
+      <button class="btn btn-primary" type="submit">टेस्ट सबमिट करें →</button>
+    </form>
+    <div id="quizResult" class="quiz-result" hidden></div>
+  </main>
+
+  <script type="module">
+    import { requireStudent } from "./app.js";
+
+    const session = await requireStudent();
+
+    if (session) {
+      const questions = [
+        { q:"CPU का पूरा नाम क्या है?", options:["Central Processing Unit","Computer Personal Unit","Central Program Utility","Control Power Unit"], answer:0 },
+        { q:"इनमें से इनपुट डिवाइस कौन-सा है?", options:["Monitor","Printer","Keyboard","Speaker"], answer:2 },
+        { q:"MS Word मुख्य रूप से किस काम आता है?", options:["डॉक्यूमेंट बनाने","वीडियो एडिटिंग","ऑपरेटिंग सिस्टम चलाने","हार्डवेयर रिपेयर करने"], answer:0 },
+        { q:"Excel में फॉर्मूला आम तौर पर किस चिह्न से शुरू होता है?", options:["#","=","@","&"], answer:1 },
+        { q:"इनमें से आउटपुट डिवाइस कौन-सा है?", options:["Mouse","Keyboard","Scanner","Monitor"], answer:3 },
+        { q:"किसी फाइल को सेव करने का सामान्य शॉर्टकट क्या है?", options:["Ctrl + S","Ctrl + P","Ctrl + X","Ctrl + Z"], answer:0 },
+        { q:"इंटरनेट पर अपनी सुरक्षा के लिए क्या नहीं करना चाहिए?", options:["मजबूत पासवर्ड रखना","OTP साझा करना","वेबसाइट जाँचना","संदिग्ध लिंक से बचना"], answer:1 },
+        { q:"PowerPoint किसके लिए उपयोग होता है?", options:["प्रेजेंटेशन","ऑपरेटिंग सिस्टम इंस्टॉल करने","वायरस हटाने","हार्ड डिस्क बनाने"], answer:0 },
+        { q:"फाइलों को व्यवस्थित रखने में क्या मदद करता है?", options:["फोल्डर","मॉनिटर ब्राइटनेस","वॉल्यूम","कर्सर"], answer:0 },
+        { q:"ईमेल अटैचमेंट का उपयोग किसलिए होता है?", options:["फाइल भेजने","स्क्रीन बंद करने","पासवर्ड बदलने मात्र","कंप्यूटर बंद करने"], answer:0 }
+      ];
+
+      const root = document.getElementById("questions");
+
+      questions.forEach((item, index) => {
+        const section = document.createElement("section");
+        section.className = "question";
+
+        const heading = document.createElement("h3");
+        heading.textContent = `${index + 1}. ${item.q}`;
+        section.append(heading);
+
+        item.options.forEach((option, optionIndex) => {
+          const label = document.createElement("label");
+          label.className = "option";
+
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = `q${index}`;
+          radio.value = String(optionIndex);
+          radio.required = optionIndex === 0;
+
+          label.append(radio, document.createTextNode(" " + option));
+          section.append(label);
+        });
+
+        root.append(section);
+      });
+
+      document.getElementById("quizForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        let score = 0;
+
+        questions.forEach((item, index) => {
+          const selected = form.querySelector(`input[name="q${index}"]:checked`);
+          if (selected && Number(selected.value) === item.answer) score++;
+        });
+
+        const result = document.getElementById("quizResult");
+        result.hidden = false;
+        result.textContent = `तुम्हारा स्कोर: ${score}/${questions.length} (${Math.round(score / questions.length * 100)}%)`;
+
+        sessionStorage.setItem("jayQuizResult", JSON.stringify({
+          score,
+          total: questions.length,
+          percent: Math.round(score / questions.length * 100),
+          date: new Date().toISOString()
+        }));
+
+        const link = document.createElement("a");
+        link.href = "./result.html";
+        link.className = "btn btn-outline";
+        link.style.marginTop = "15px";
+        link.textContent = "रिजल्ट पेज खोलें →";
+        result.append(document.createElement("br"), link);
+      });
+    }
+  </script>
+</body>
+</html>

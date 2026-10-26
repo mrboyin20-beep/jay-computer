@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Progress | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" href="./dashboard.html">डैशबोर्ड</a>
+  </header>
+  <main style="max-width:900px;margin:auto;padding:40px 5%">
+    <span class="section-kicker">YOUR LEARNING JOURNEY</span>
+    <h1 style="margin:12px 0 25px">मेरी प्रोग्रेस</h1>
+    <section style="padding:24px;background:var(--panel);border:1px solid var(--border);border-radius:18px">
+      <p style="color:var(--muted)">पूरे किए गए लेसन</p>
+      <h2 id="completedCount" style="font-size:35px;margin:8px 0">--</h2>
+      <div style="height:8px;background:#28314a;border-radius:10px;overflow:hidden">
+        <div id="progressBar" style="height:100%;width:0;background:linear-gradient(90deg,#6476ff,#63dfb2)"></div>
+      </div>
+      <p id="progressText" style="color:var(--muted);font-size:12px;margin-top:12px">प्रोग्रेस लोड हो रही है...</p>
+    </section>
+    <h2 style="margin:28px 0 15px">पूरे किए गए लेसन</h2>
+    <div id="lessonList"></div>
+  </main>
+  <script type="module">
+    import { requireStudent } from "./app.js";
+    import { courses } from "./course-data.js";
+    import { db } from "./firebase.js";
+    import {
+      collection, getDocs
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    const session = await requireStudent();
+
+    if (session) {
+      const snap = await getDocs(
+        collection(db, "users", session.user.uid, "completedLessons")
+      );
+      const completed = snap.docs.map(d => d.data());
+      const total = courses.reduce((sum, c) => sum + c.lessons.length, 0);
+      const count = completed.length;
+      const percent = total ? Math.min(100, Math.round(count / total * 100)) : 0;
+
+      document.getElementById("completedCount").textContent = `${count} / ${total}`;
+      document.getElementById("progressBar").style.width = percent + "%";
+      document.getElementById("progressText").textContent = `कुल लेसन में ${percent}% पूरे हुए।`;
+
+      const list = document.getElementById("lessonList");
+      if (!completed.length) {
+        list.textContent = "अभी कोई लेसन पूरा नहीं किया गया है।";
+      } else {
+        completed.forEach(item => {
+          const row = document.createElement("p");
+          row.style.cssText = "padding:14px;margin:9px 0;border:1px solid var(--border);border-radius:10px;color:#c7d0e3";
+          row.textContent = `✓ ${item.lessonTitle || item.courseId}`;
+          list.append(row);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

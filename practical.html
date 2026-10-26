@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practical | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .page{max-width:900px;margin:auto;padding:40px 5%}
+    .task{padding:22px;margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:16px}
+    .task h2{font-size:17px;margin-bottom:8px}
+    .task p,.task li{color:var(--muted);font-size:13px;line-height:2}
+    .task ul{padding-left:22px;margin:10px 0}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" href="./dashboard.html">डैशबोर्ड</a>
+  </header>
+  <main class="page">
+    <span class="section-kicker">HANDS-ON LEARNING</span>
+    <h1 style="margin:12px 0">कंप्यूटर प्रैक्टिकल</h1>
+    <p style="color:var(--muted)">कंप्यूटर पर नीचे दिए गए काम करके अभ्यास करो।</p>
+
+    <article class="task">
+      <h2>Practical 01: अपना फोल्डर बनाओ</h2>
+      <ul>
+        <li>Desktop पर जाओ और खाली जगह पर राइट-क्लिक करो।</li>
+        <li>New → Folder चुनो।</li>
+        <li>फोल्डर का नाम `Computer Practice` रखो।</li>
+        <li>उसके अंदर एक नया टेक्स्ट डॉक्यूमेंट बनाओ।</li>
+      </ul>
+      <label><input type="checkbox"> मैंने यह प्रैक्टिकल कर लिया है।</label>
+    </article>
+
+    <article class="task">
+      <h2>Practical 02: MS Word डॉक्यूमेंट</h2>
+      <ul>
+        <li>MS Word खोलो और नया डॉक्यूमेंट बनाओ।</li>
+        <li>अपना नाम, कोर्स और तारीख लिखो।</li>
+        <li>हेडिंग को Bold करो और टेक्स्ट को व्यवस्थित करो।</li>
+        <li>फाइल को `My-First-Document` नाम से सेव करो।</li>
+      </ul>
+      <label><input type="checkbox"> मैंने यह प्रैक्टिकल कर लिया है।</label>
+    </article>
+
+    <article class="task">
+      <h2>Practical 03: Excel मार्कशीट</h2>
+      <ul>
+        <li>Excel में Name, Subject और Marks के कॉलम बनाओ।</li>
+        <li>कम से कम पाँच विद्यार्थियों का डेमो डेटा भरो।</li>
+        <li>SUM का इस्तेमाल करके कुल अंक निकालो।</li>
+        <li>फाइल को `Practice-Marksheet` नाम से सेव करो।</li>
+      </ul>
+      <label><input type="checkbox"> मैंने यह प्रैक्टिकल कर लिया है।</label>
+    </article>
+  </main>
+  <script type="module">
+    import { requireStudent } from "./app.js";
+    await requireStudent();
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Certificate | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .certificate{max-width:780px;margin:35px auto;padding:35px;text-align:center;border:2px solid #b9a3ff;border-radius:12px;background:linear-gradient(145deg,#17203a,#111528)}
+    .certificate h1{font-size:clamp(25px,4vw,40px);color:#d4c4ff;margin:18px 0}
+    .certificate p{color:#c2cbe0;margin:10px 0}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" href="./dashboard.html">डैशबोर्ड</a>
+  </header>
+  <main style="padding:20px">
+    <section class="certificate">
+      <div style="font-size:35px">✦</div>
+      <span class="section-kicker">JAY COMPUTER ACADEMY</span>
+      <h1>Certificate of Completion</h1>
+      <p>यह पेज भविष्य में कोर्स पूरा होने पर प्रमाणपत्र दिखाने के लिए है।</p>
+      <p>स्टूडेंट: <strong id="studentName">लोड हो रहा है...</strong></p>
+      <p>कोर्स: Basic Computer Training</p>
+      <p id="certificateStatus">सर्टिफिकेट की पात्रता जाँची जानी बाकी है।</p>
+      <button class="btn btn-outline" onclick="window.print()">प्रिंट करें</button>
+    </section>
+  </main>
+  <script type="module">
+    import { requireStudent } from "./app.js";
+    const session = await requireStudent();
+    if (session) {
+      document.getElementById("studentName").textContent =
+        session.profile.name || session.user.displayName || "स्टूडेंट";
+    }
+  </script>
+</body>
+</html>

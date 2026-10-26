@@ -1,0 +1,81 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isActiveAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == "active";
+    }
+
+    function isActiveStudent(uid) {
+      return signedIn()
+        && request.auth.uid == uid
+        && exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.role == "student"
+        && get(/databases/$(database)/documents/users/$(uid)).data.status == "active";
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isActiveAdmin());
+
+      // Users cannot create their own role or change their role/status.
+      allow create, delete: if isActiveAdmin();
+
+      allow update: if isActiveAdmin()
+        || (
+          signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['name'])
+        );
+
+      match /completedLessons/{lessonId} {
+        allow read: if isActiveStudent(uid) || isActiveAdmin();
+
+        allow create, update: if isActiveStudent(uid)
+          && request.resource.data.keys().hasOnly([
+            'courseId', 'lessonIndex', 'lessonTitle', 'completedAt'
+          ])
+          && request.resource.data.courseId is string
+          && request.resource.data.lessonIndex is int
+          && request.resource.data.lessonIndex >= 0
+          && request.resource.data.lessonTitle is string;
+
+        allow delete: if isActiveAdmin();
+      }
+
+      match /quizResults/{resultId} {
+        allow read: if isActiveStudent(uid) || isActiveAdmin();
+
+        // Final scoring should be verified on a trusted server before
+        // accepting results as official or using them for certificates.
+        allow create: if isActiveStudent(uid)
+          && request.resource.data.keys().hasOnly([
+            'quizId', 'score', 'total', 'submittedAt'
+          ])
+          && request.resource.data.quizId is string
+          && request.resource.data.score is int
+          && request.resource.data.total is int
+          && request.resource.data.score >= 0
+          && request.resource.data.total > 0
+          && request.resource.data.score <= request.resource.data.total;
+
+        allow update, delete: if isActiveAdmin();
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

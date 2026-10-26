@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson | JAY COMPUTER ACADEMY</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .lesson-page{max-width:850px;margin:auto;padding:40px 5%}
+    .lesson-panel{margin-top:20px;padding:26px;border:1px solid var(--border);border-radius:18px;background:var(--panel)}
+    .lesson-panel p,.lesson-panel li{font-size:14px;color:#c1cbe0;line-height:2}
+    .lesson-panel h2{font-size:20px;margin:20px 0 10px}
+    .lesson-panel ul{padding-left:22px}
+    .notice{margin-top:20px;padding:14px;border:1px solid #7887ff35;border-radius:12px;color:#c4ccff;font-size:12px}
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
+    <a class="btn btn-outline" id="backLink" href="./courses.html">कोर्स पर लौटें</a>
+  </header>
+  <main class="lesson-page">
+    <span class="section-kicker">COURSE LESSON</span>
+    <h1 id="lessonTitle" style="margin-top:12px">लेसन</h1>
+    <div class="lesson-panel">
+      <h2>इस लेसन में क्या सीखेंगे?</h2>
+      <p id="lessonIntro">इस विषय का परिचय और उसके मुख्य बिंदु पढ़ें।</p>
+      <h2>मुख्य बिंदु</h2>
+      <ul>
+        <li>विषय का अर्थ और उपयोग समझें।</li>
+        <li>कंप्यूटर पर इस विषय से जुड़े उदाहरण देखें।</li>
+        <li>जो सीखा है, उसे कंप्यूटर पर अभ्यास करके जाँचें।</li>
+      </ul>
+      <div class="notice">यह शुरुआती लेसन टेम्पलेट है। वास्तविक विस्तृत नोट्स और अभ्यास के निर्देश अलग से जोड़े जाएँगे।</div>
+      <button class="btn btn-primary" id="completeButton" style="margin-top:22px">लेसन पूरा किया ✓</button>
+      <p id="status" role="status" style="margin-top:12px"></p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { requireStudent } from "./app.js";
+    import { getCourse } from "./course-data.js";
+    import { db } from "./firebase.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    const session = await requireStudent();
+
+    if (session) {
+      const params = new URLSearchParams(location.search);
+      const course = getCourse(params.get("course"));
+      const index = Number(params.get("lesson"));
+      const title = course?.lessons[index];
+      const status = document.getElementById("status");
+
+      if (!course || !Number.isInteger(index) || !title) {
+        document.getElementById("lessonTitle").textContent = "लेसन नहीं मिला";
+        document.getElementById("completeButton").disabled = true;
+      } else {
+        document.title = title + " | JAY COMPUTER ACADEMY";
+        document.getElementById("lessonTitle").textContent = title;
+        document.getElementById("lessonIntro").textContent =
+          `${course.hindi} में "${title}" का परिचय पढ़ें और दिए गए बिंदुओं का अभ्यास करें।`;
+        document.getElementById("backLink").href =
+          `./course-details.html?id=${encodeURIComponent(course.id)}`;
+
+        document.getElementById("completeButton").addEventListener("click", async () => {
+          const button = document.getElementById("completeButton");
+          button.disabled = true;
+          status.textContent = "प्रोग्रेस सेव हो रही है...";
+
+          try {
+            const recordId = `${course.id}_${index}`;
+            await setDoc(
+              doc(db, "users", session.user.uid, "completedLessons", recordId),
+              {
+                courseId: course.id,
+                lessonIndex: index,
+                lessonTitle: title,
+                completedAt: serverTimestamp()
+              }
+            );
+            status.textContent = "लेसन पूरा होने की प्रोग्रेस सेव हो गई।";
+            button.textContent = "पूरा किया गया ✓";
+          } catch (error) {
+            console.error(error);
+            status.textContent = "सेव नहीं हुआ। Firebase Firestore Rules जाँचें।";
+            button.disabled = false;
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
