@@ -1,0 +1,171 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, "Noto Sans Devanagari", sans-serif;
+  background: #f3f7fc;
+  color: #17233b;
+  line-height: 1.55;
+}
+
+a {
+  color: #145bd7;
+  text-decoration: none;
+}
+
+.top {
+  background: #fff;
+  border-bottom: 1px solid #dbe5f3;
+  padding: 15px max(20px, calc((100% - 1100px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 800;
+  color: #1256c5;
+}
+
+.top nav {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 0 18px;
+}
+
+.panel,
+.card {
+  background: #fff;
+  border: 1px solid #dce6f4;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 5px 18px #163d6a0a;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.btn,
+button {
+  background: #145bd7;
+  color: #fff;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.outline {
+  background: #fff;
+  color: #145bd7;
+  border: 1px solid #b9ccef;
+}
+
+.muted {
+  color: #65738a;
+}
+
+.tag {
+  display: inline-block;
+  background: #e9f1ff;
+  color: #145bd7;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.field {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd7e8;
+  border-radius: 9px;
+  margin: 7px 0 14px;
+  font-size: 15px;
+}
+
+.error {
+  color: #b42318;
+  background: #fff0ef;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.success {
+  color: #067647;
+  background: #e8fff4;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.question {
+  padding: 18px 0;
+  border-bottom: 1px solid #e1e8f2;
+}
+
+.option {
+  display: block;
+  padding: 9px;
+  margin: 8px 0;
+  border: 1px solid #d5dfed;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.option input {
+  margin-right: 8px;
+}
+
+.bar {
+  height: 10px;
+  background: #e3eaf5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: #246be5;
+}
+
+@media (max-width: 600px) {
+  .top {
+    align-items: flex-start;
+  }
+
+  .top nav {
+    gap: 9px;
+  }
+
+  .wrap {
+    margin: 18px auto;
+  }
+
+  .panel,
+  .card {
+    padding: 17px;
+  }
+}

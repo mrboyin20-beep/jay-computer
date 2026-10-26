@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Certificate</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { modules } from "./js/course-data.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  collection, getDocs
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+requireStudent(async (user, profile) => {
+  const totalLessons = modules.reduce((sum, m) => sum + m.lessons, 0);
+  let completedCount = 0;
+
+  try {
+    const snap = await getDocs(
+      collection(db, "users", user.uid, "completions")
+    );
+    completedCount = snap.size;
+  } catch (error) {}
+
+  const eligible = completedCount >= totalLessons;
+
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <h1>Course Certificate</h1>
+
+        ${eligible ? `
+          <div class="card" style="text-align:center;border:4px double #145bd7;padding:40px">
+            <h2>JAY COMPUTER ACADEMY</h2>
+            <h1>Certificate of Completion</h1>
+            <p>यह प्रमाणित किया जाता है कि</p>
+            <h2>${escapeHtml(profile.name || "विद्यार्थी")}</h2>
+            <p>ने Basic Computer Course के सभी लेसन पूरे किए हैं।</p>
+            <button onclick="window.print()">Print / Save as PDF</button>
+          </div>
+        ` : `
+          <p>सर्टिफिकेट अभी लॉक है। सभी ${totalLessons} लेसन पूरे करें।</p>
+          <p>वर्तमान प्रगति: ${completedCount}/${totalLessons}</p>
+          <div class="bar">
+            <span style="width:${Math.min(100, completedCount / totalLessons * 100)}%"></span>
+          </div>
+        `}
+      </section>
+    </main>`;
+
+  bindLogout();
+});
+</script>
+</body>
+</html>

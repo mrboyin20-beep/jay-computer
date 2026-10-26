@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d47a1">
+  <meta name="description" content="JAY COMPUTER ACADEMY - Basic Computer Course, Practical, Quiz और Online Learning">
+  <title>JAY COMPUTER ACADEMY</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, "Noto Sans Devanagari", sans-serif;
+      background: #f3f7ff;
+      color: #14233f;
+    }
+
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: white;
+      background:
+        radial-gradient(circle at 20% 20%, #2878e8 0, transparent 35%),
+        radial-gradient(circle at 85% 80%, #163d8c 0, transparent 38%),
+        linear-gradient(145deg, #071a3c, #0d47a1, #1675df);
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+
+    #splash.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .logo {
+      width: 108px;
+      height: 108px;
+      border: 2px solid rgba(255,255,255,.8);
+      border-radius: 30px;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient(145deg, #ffffff, #dceaff);
+      color: #1054bd;
+      box-shadow: 0 15px 45px #00143766;
+      animation: logoIn .9s ease both, float 3s ease-in-out infinite;
+    }
+
+    .academy-name {
+      margin-top: 28px;
+      font-size: clamp(24px, 6vw, 38px);
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      animation: rise .8s .2s both;
+    }
+
+    .tagline {
+      margin-top: 12px;
+      color: #dceaff;
+      font-size: 15px;
+      animation: rise .8s .4s both;
+    }
+
+    .loading-track {
+      width: min(250px, 75vw);
+      height: 5px;
+      margin-top: 38px;
+      border-radius: 10px;
+      background: #ffffff35;
+      overflow: hidden;
+    }
+
+    .loading-track span {
+      display: block;
+      width: 45%;
+      height: 100%;
+      border-radius: 10px;
+      background: white;
+      animation: load 1.5s ease-in-out infinite;
+    }
+
+    .loading-text {
+      margin-top: 13px;
+      font-size: 12px;
+      color: #dceaff;
+      letter-spacing: 1px;
+    }
+
+    #main {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      padding: 30px;
+      border: 1px solid #dce7f7;
+      border-radius: 24px;
+      background: white;
+      box-shadow: 0 18px 55px #183b6c12;
+    }
+
+    .mini-logo {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: #eaf2ff;
+      color: #145bd7;
+      font-size: 23px;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      color: #65738a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 17px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      margin-top: 7px;
+      border: 1px solid #cbd8eb;
+      border-radius: 11px;
+      outline: none;
+      font-size: 15px;
+      background: #fbfdff;
+    }
+
+    input:focus {
+      border-color: #145bd7;
+      box-shadow: 0 0 0 3px #145bd71c;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 11px;
+      background: #145bd7;
+      color: white;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      margin-top: 22px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    #message {
+      margin-top: 14px;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .error {
+      color: #b42318;
+      background: #fff0ef;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 12px;
+      color: #7b879a;
+    }
+
+    @keyframes logoIn {
+      from { opacity: 0; transform: scale(.65) rotate(-10deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    @keyframes load {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(260%); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <section id="splash" aria-label="Academy splash screen">
+    <div class="logo">JCA</div>
+    <div class="academy-name">JAY COMPUTER<br>ACADEMY</div>
+    <p class="tagline">Learn • Practice • Achieve</p>
+
+    <div class="loading-track"><span></span></div>
+    <p class="loading-text">YOUR LEARNING JOURNEY STARTS HERE</p>
+  </section>
+
+  <main id="main">
+    <section class="login-card">
+      <div class="mini-logo">JCA</div>
+      <h1>Student Login</h1>
+      <p class="muted">
+        अपनी Academy में प्रवेश करने के लिए अपना ईमेल और पासवर्ड डालें।
+      </p>
+
+      <form id="loginForm">
+        <label for="email">ईमेल एड्रेस</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="student@example.com"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">पासवर्ड</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="अपना पासवर्ड डालें"
+          autocomplete="current-password"
+          required
+        >
+
+        <button id="loginButton" type="submit">Login करें</button>
+        <p id="message" aria-live="polite"></p>
+      </form>
+
+      <p class="footer">
+        © 2026 JAY COMPUTER ACADEMY<br>
+        केवल अधिकृत विद्यार्थियों के लिए
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "./js/firebase.js";
+
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+    const splash = document.getElementById("splash");
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+    const button = document.getElementById("loginButton");
+
+    // Splash screen कुछ सेकंड बाद हटेगी।
+    window.setTimeout(() => {
+      splash.classList.add("hide");
+    }, 2300);
+
+    // पहले से लॉगिन विद्यार्थी को Dashboard पर भेजें।
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.replace("dashboard.html");
+      }
+    });
+
+    // Firebase से असली Login।
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      button.disabled = true;
+      button.textContent = "Login हो रहा है...";
+      message.textContent = "";
+      message.className = "";
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.replace("dashboard.html");
+      } catch (error) {
+        message.className = "error";
+
+        const errors = {
+          "auth/invalid-credential": "ईमेल या पासवर्ड सही नहीं है।",
+          "auth/invalid-email": "ईमेल एड्रेस सही तरीके से डालें।",
+          "auth/too-many-requests": "कई बार कोशिश हुई है। कुछ देर बाद फिर प्रयास करें।",
+          "auth/network-request-failed": "इंटरनेट कनेक्शन जाँचें।"
+        };
+
+        message.textContent =
+          errors[error.code] || "Login नहीं हुआ। Firebase सेटअप और अकाउंट जाँचें।";
+
+        button.disabled = false;
+        button.textContent = "Login करें";
+      }
+    });
+  </script>
+</body>
+</html>

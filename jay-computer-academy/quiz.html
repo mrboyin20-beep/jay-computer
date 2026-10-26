@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mock Test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { getLesson } from "./js/course-data.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  doc, getDoc, addDoc, collection, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+const params = new URLSearchParams(location.search);
+const moduleId = Number(params.get("module")) || 1;
+const lessonNo = Number(params.get("lesson")) || 1;
+const lesson = getLesson(moduleId, lessonNo);
+
+const questions = [
+  { q:"कंप्यूटर के निर्देश प्रोसेस करने में कौन मुख्य भूमिका निभाता है?",
+    o:["CPU","कीबोर्ड","मॉनिटर","प्रिंटर"], a:0 },
+  { q:"टेक्स्ट टाइप करने के लिए सामान्यतः कौन-सा उपकरण उपयोग होता है?",
+    o:["स्पीकर","कीबोर्ड","प्रोजेक्टर","मॉनिटर"], a:1 },
+  { q:"कौन-सा Operating System है?",
+    o:["MS Word","Google Chrome","Microsoft Windows","MS Excel"], a:2 },
+  { q:"बिजली बंद होने पर सामान्यतः किस मेमोरी का डेटा मिट जाता है?",
+    o:["SSD","Hard Disk","ROM","RAM"], a:3 },
+  { q:"प्रिंटर का मुख्य काम क्या है?",
+    o:["कागज पर आउटपुट देना","टेक्स्ट टाइप करना","ध्वनि रिकॉर्ड करना","निर्देश प्रोसेस करना"], a:0 },
+  { q:"इनमें से कौन Storage Device है?",
+    o:["कीबोर्ड","USB Flash Drive","मॉनिटर","माइक्रोफोन"], a:1 },
+  { q:"कंप्यूटर के भौतिक भाग क्या कहलाते हैं?",
+    o:["सॉफ्टवेयर","डेटाबेस","हार्डवेयर","ऑपरेटिंग सिस्टम"], a:2 },
+  { q:"किसी अज्ञात ईमेल लिंक के साथ क्या करना चाहिए?",
+    o:["तुरंत खोलना","पासवर्ड डालना","दोस्तों को भेजना","पहले स्रोत की जाँच करना"], a:3 },
+  { q:"कंप्यूटर का मॉनिटर सामान्यतः Output Device है।",
+    o:["सही","गलत","केवल Storage","इनमें से कोई नहीं"], a:0 },
+  { q:"MS Word एक Operating System है।",
+    o:["सही","गलत","केवल हार्डवेयर","इनमें से कोई नहीं"], a:1 }
+];
+
+requireStudent(async (user, profile) => {
+  const completion = await getDoc(
+    doc(db, "users", user.uid, "completions", `${moduleId}_${lessonNo}`)
+  );
+
+  if (!completion.exists()) {
+    document.querySelector("#app").innerHTML = header(profile) + `
+      <main class="wrap">
+        <section class="panel">
+          <h1>Mock Test लॉक है</h1>
+          <p>पहले प्रैक्टिकल पूरा करें।</p>
+          <a class="btn" href="practical.html?module=${moduleId}&lesson=${lessonNo}">
+            प्रैक्टिकल पर जाएँ
+          </a>
+        </section>
+      </main>`;
+    bindLogout();
+    return;
+  }
+
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <span class="tag">MOCK TEST</span>
+        <h1>${escapeHtml(lesson.title)}</h1>
+        <p>10 प्रश्न · हर सही उत्तर का 1 अंक · पास होने के लिए 7/10</p>
+
+        <form id="quizForm">
+          ${questions.map((q, i) => `
+            <div class="question">
+              <h3>${i + 1}. ${escapeHtml(q.q)}</h3>
+              ${q.o.map((option, j) => `
+                <label class="option">
+                  <input type="radio" name="q${i}" value="${j}" required>
+                  ${escapeHtml(option)}
+                </label>`).join("")}
+            </div>`).join("")}
+
+          <button type="submit">टेस्ट जमा करें</button>
+        </form>
+        <p id="msg"></p>
+      </section>
+    </main>`;
+
+  bindLogout();
+
+  document.querySelector("#quizForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const answers = questions.map((q, i) => Number(formData.get("q" + i)));
+    const score = answers.reduce(
+      (total, answer, i) => total + (answer === questions[i].a ? 1 : 0), 0
+    );
+
+    try {
+      const result = await addDoc(
+        collection(db, "users", user.uid, "attempts"),
+        {
+          moduleId,
+          lessonNo,
+          lessonTitle: lesson.title,
+          score,
+          total: questions.length,
+          passed: score >= 7,
+          answers,
+          submittedAt: serverTimestamp()
+        }
+      );
+
+      location.href =
+        `result.html?id=${result.id}&module=${moduleId}&lesson=${lessonNo}`;
+    } catch (error) {
+      const msg = document.querySelector("#msg");
+      msg.className = "error";
+      msg.textContent = "रिजल्ट सेव नहीं हुआ। Firebase Rules जाँचें: " + error.code;
+    }
+  });
+});
+</script>
+</body>
+</html>

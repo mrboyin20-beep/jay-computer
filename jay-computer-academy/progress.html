@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Progress</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  collection, getDocs
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+requireStudent(async (user, profile) => {
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <h1>मेरी प्रगति</h1>
+        <h2>Practical</h2>
+        <div id="completions">लोड हो रहा है...</div>
+        <h2>Quiz Attempts</h2>
+        <div id="attempts">लोड हो रहा है...</div>
+      </section>
+    </main>`;
+
+  bindLogout();
+
+  try {
+    const c = await getDocs(
+      collection(db, "users", user.uid, "completions")
+    );
+
+    document.querySelector("#completions").innerHTML = c.empty
+      ? "अभी कोई प्रैक्टिकल पूरा नहीं हुआ।"
+      : c.docs.map(item => {
+          const d = item.data();
+          return `<p>
+            मॉड्यूल ${d.moduleId}, लेसन ${d.lessonNo}:
+            ${escapeHtml(d.lessonTitle || "लेसन")}
+            <span class="tag">Complete</span>
+          </p>`;
+        }).join("");
+
+    const a = await getDocs(
+      collection(db, "users", user.uid, "attempts")
+    );
+
+    document.querySelector("#attempts").innerHTML = a.empty
+      ? "अभी कोई टेस्ट नहीं दिया।"
+      : a.docs.map(item => {
+          const d = item.data();
+          return `<p>
+            ${escapeHtml(d.lessonTitle || "Quiz")}:
+            ${d.score}/${d.total}
+            <span class="tag">${d.passed ? "PASS" : "RETRY"}</span>
+          </p>`;
+        }).join("");
+  } catch (error) {
+    document.querySelector("#completions").textContent =
+      "डेटा नहीं पढ़ा जा सका। Firebase Rules जाँचें।";
+  }
+});
+</script>
+</body>
+</html>

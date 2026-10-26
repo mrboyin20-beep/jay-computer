@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  collection, getDocs
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+requireStudent(async (user, profile) => {
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <span class="tag">STUDENT DASHBOARD</span>
+        <h1>नमस्ते, ${escapeHtml(profile.name || "विद्यार्थी")} 👋</h1>
+        <p class="muted">आज कुछ नया सीखें और अपना प्रैक्टिकल पूरा करें।</p>
+        <a class="btn" href="courses.html">कोर्स शुरू करें</a>
+      </section>
+
+      <section class="grid" style="margin-top:18px">
+        <article class="card">
+          <p class="muted">Student ID</p>
+          <h2>${escapeHtml(profile.studentId || "सेट नहीं")}</h2>
+        </article>
+        <article class="card">
+          <p class="muted">पूरे किए Practical</p>
+          <h2 id="completed">लोड हो रहा है...</h2>
+        </article>
+        <article class="card">
+          <p class="muted">Quiz Attempts</p>
+          <h2 id="attempts">लोड हो रहा है...</h2>
+        </article>
+      </section>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>सीखने का तरीका</h2>
+        <p>लेसन पढ़ें → प्रैक्टिकल करें → Mock Test दें → रिजल्ट देखें।</p>
+        <a href="progress.html">मेरी प्रगति देखें →</a>
+        <p id="notice" class="muted"></p>
+      </section>
+    </main>`;
+
+  bindLogout();
+
+  try {
+    const completions = await getDocs(
+      collection(db, "users", user.uid, "completions")
+    );
+    const attempts = await getDocs(
+      collection(db, "users", user.uid, "attempts")
+    );
+
+    document.querySelector("#completed").textContent = completions.size;
+    document.querySelector("#attempts").textContent = attempts.size;
+  } catch (error) {
+    document.querySelector("#notice").textContent =
+      "Progress लोड नहीं हुआ। Firebase Rules जाँचें।";
+  }
+});
+</script>
+</body>
+</html>

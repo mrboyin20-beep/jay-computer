@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz Result</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+const params = new URLSearchParams(location.search);
+const resultId = params.get("id");
+const moduleId = Number(params.get("module")) || 1;
+const lessonNo = Number(params.get("lesson")) || 1;
+
+requireStudent(async (user, profile) => {
+  let data = null;
+
+  if (resultId) {
+    const snap = await getDoc(
+      doc(db, "users", user.uid, "attempts", resultId)
+    );
+    if (snap.exists()) data = snap.data();
+  }
+
+  if (!data) {
+    document.querySelector("#app").innerHTML = header(profile) + `
+      <main class="wrap">
+        <section class="panel">
+          <h1>Result नहीं मिला</h1>
+          <a href="courses.html">कोर्स पर जाएँ</a>
+        </section>
+      </main>`;
+    bindLogout();
+    return;
+  }
+
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <span class="tag">TEST RESULT</span>
+        <h1>${data.passed ? "बधाई! टेस्ट पास 🎉" : "अभ्यास जारी रखें"}</h1>
+        <p>${escapeHtml(data.lessonTitle || "Mock Test")}</p>
+
+        <section class="grid">
+          <article class="card">
+            <p class="muted">प्राप्त अंक</p>
+            <h2>${data.score}/${data.total}</h2>
+          </article>
+          <article class="card">
+            <p class="muted">परिणाम</p>
+            <h2>${data.passed ? "PASS" : "RETRY"}</h2>
+          </article>
+        </section>
+
+        <p>${data.passed
+          ? "आप अगला लेसन शुरू कर सकते हैं।"
+          : "कम से कम 7 अंक चाहिए। नोट्स पढ़कर दोबारा प्रयास करें।"}</p>
+
+        <a class="btn" href="course-details.html?module=${moduleId}">
+          मॉड्यूल पर वापस
+        </a>
+        <a class="btn" href="quiz.html?module=${moduleId}&lesson=${lessonNo}">
+          दोबारा टेस्ट दें
+        </a>
+      </section>
+    </main>`;
+
+  bindLogout();
+});
+</script>
+</body>
+</html>

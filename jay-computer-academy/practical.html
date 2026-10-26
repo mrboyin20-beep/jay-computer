@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practical Task</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { db } from "./js/firebase.js";
+import { getLesson } from "./js/course-data.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  doc, getDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+const params = new URLSearchParams(location.search);
+const moduleId = Number(params.get("module")) || 1;
+const lessonNo = Number(params.get("lesson")) || 1;
+const lesson = getLesson(moduleId, lessonNo);
+
+requireStudent((user, profile) => {
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <section class="panel">
+        <span class="tag">PRACTICAL TASK</span>
+        <h1>${escapeHtml(lesson.title)}</h1>
+        <p>${escapeHtml(lesson.module.description)}</p>
+
+        <h2>टास्क पूरा करें</h2>
+        <ol>
+          <li>अपने कंप्यूटर पर संबंधित प्रोग्राम खोलें।</li>
+          <li>लेसन के निर्देशों के अनुसार काम करें।</li>
+          <li>अपनी फाइल उचित नाम से सेव करें।</li>
+          <li>काम पूरा होने पर पुष्टि करें।</li>
+        </ol>
+
+        <label class="option">
+          <input type="checkbox" id="confirm">
+          मैंने प्रैक्टिकल खुद पूरा किया है।
+        </label>
+
+        <label for="note">बनाई गई फाइल का नाम (वैकल्पिक)</label>
+        <input class="field" id="note" placeholder="उदाहरण: Application.docx">
+
+        <button id="done">Practical Complete करें</button>
+        <p id="msg" aria-live="polite"></p>
+      </section>
+    </main>`;
+
+  bindLogout();
+
+  document.querySelector("#done").addEventListener("click", async () => {
+    const msg = document.querySelector("#msg");
+
+    if (!document.querySelector("#confirm").checked) {
+      msg.className = "error";
+      msg.textContent = "पहले पुष्टि वाला बॉक्स चुनें।";
+      return;
+    }
+
+    try {
+      const progressRef = doc(
+        db, "users", user.uid, "moduleProgress", String(moduleId)
+      );
+      const snap = await getDoc(progressRef);
+      const old = snap.exists() ? snap.data().completedLessons || [] : [];
+      const completed = [...new Set([...old, lessonNo])].sort((a,b) => a-b);
+
+      await setDoc(progressRef, {
+        moduleId,
+        completedLessons: completed,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      await setDoc(doc(
+        db, "users", user.uid, "completions", `${moduleId}_${lessonNo}`
+      ), {
+        moduleId,
+        lessonNo,
+        lessonTitle: lesson.title,
+        practicalNote: document.querySelector("#note").value.trim(),
+        completedAt: serverTimestamp()
+      });
+
+      msg.className = "success";
+      msg.textContent = "प्रैक्टिकल सेव हो गया। अब Mock Test दें।";
+
+      msg.insertAdjacentHTML("beforeend", `
+        <p><a class="btn" href="quiz.html?module=${moduleId}&lesson=${lessonNo}">
+          Mock Test शुरू करें
+        </a></p>`);
+    } catch (error) {
+      msg.className = "error";
+      msg.textContent = "डेटा सेव नहीं हुआ। Firebase Rules जाँचें: " + error.code;
+    }
+  });
+});
+</script>
+</body>
+</html>

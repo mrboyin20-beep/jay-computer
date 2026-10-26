@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { getLesson } from "./js/course-data.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+
+const params = new URLSearchParams(location.search);
+const moduleId = Number(params.get("module")) || 1;
+const lessonNo = Number(params.get("lesson")) || 1;
+const lesson = getLesson(moduleId, lessonNo);
+
+requireStudent((user, profile) => {
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <a href="course-details.html?module=${moduleId}">← मॉड्यूल पर वापस</a>
+
+      <section class="panel" style="margin-top:16px">
+        <span class="tag">LESSON ${lessonNo} / ${lesson.total}</span>
+        <h1>${escapeHtml(lesson.title)}</h1>
+
+        <h2>इस लेसन में क्या सीखेंगे?</h2>
+        <p>${escapeHtml(lesson.module.description)}</p>
+
+        <h2>थ्योरी नोट्स</h2>
+        <p>
+          इस लेसन के विषय को ध्यान से पढ़ें। कंप्यूटर पर उदाहरण करके देखें,
+          जरूरी बातें अपनी कॉपी में लिखें और उसके बाद प्रैक्टिकल करें।
+        </p>
+
+        <section class="card">
+          <h3>याद रखने योग्य बातें</h3>
+          <ul>
+            <li>निर्देशों को क्रम से पढ़ें।</li>
+            <li>कंप्यूटर पर खुद अभ्यास करें।</li>
+            <li>समस्या आने पर शिक्षक से मदद लें।</li>
+          </ul>
+        </section>
+
+        <p style="margin-top:20px">
+          <a class="btn" href="practical.html?module=${moduleId}&lesson=${lessonNo}">
+            प्रैक्टिकल शुरू करें
+          </a>
+        </p>
+      </section>
+    </main>`;
+
+  bindLogout();
+});
+</script>
+</body>
+</html>

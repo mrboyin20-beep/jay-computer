@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Courses</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { modules } from "./js/course-data.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+
+requireStudent((user, profile) => {
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <h1>सभी कोर्स</h1>
+      <p class="muted">हर मॉड्यूल में लेसन और प्रैक्टिकल का अभ्यास करें।</p>
+      <input id="search" class="field" placeholder="कोर्स खोजें...">
+      <section id="courses" class="grid"></section>
+    </main>`;
+
+  function render() {
+    const term = document.querySelector("#search").value.toLowerCase();
+
+    document.querySelector("#courses").innerHTML = modules
+      .filter(m =>
+        m.title.toLowerCase().includes(term) ||
+        m.description.toLowerCase().includes(term)
+      )
+      .map(m => `
+        <article class="card">
+          <span class="tag">MODULE ${m.id}</span>
+          <h2>${escapeHtml(m.title)}</h2>
+          <p class="muted">${escapeHtml(m.description)}</p>
+          <p>${m.lessons} लेसन</p>
+          <a class="btn" href="course-details.html?module=${m.id}">
+            कोर्स खोलें
+          </a>
+        </article>
+      `).join("");
+  }
+
+  document.querySelector("#search").addEventListener("input", render);
+  render();
+  bindLogout();
+});
+</script>
+</body>
+</html>

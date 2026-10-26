@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Details</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { modules, getLesson } from "./js/course-data.js";
+import { db } from "./js/firebase.js";
+import { requireStudent, header, bindLogout, escapeHtml } from "./js/app.js";
+import {
+  doc, getDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+const moduleId = Number(new URLSearchParams(location.search).get("module")) || 1;
+
+requireStudent(async (user, profile) => {
+  const module = modules.find(m => m.id === moduleId) || modules[0];
+  let completed = [];
+
+  try {
+    const snap = await getDoc(
+      doc(db, "users", user.uid, "moduleProgress", String(module.id))
+    );
+    if (snap.exists()) completed = snap.data().completedLessons || [];
+  } catch (e) {}
+
+  document.querySelector("#app").innerHTML = header(profile) + `
+    <main class="wrap">
+      <a href="courses.html">← सभी कोर्स</a>
+      <section class="panel" style="margin:16px 0">
+        <span class="tag">MODULE ${module.id}</span>
+        <h1>${escapeHtml(module.title)}</h1>
+        <p>${escapeHtml(module.description)}</p>
+        <p>${completed.length} / ${module.lessons} लेसन पूरे</p>
+        <div class="bar">
+          <span style="width:${completed.length / module.lessons * 100}%"></span>
+        </div>
+      </section>
+      <section class="grid">
+        ${Array.from({length: module.lessons}, (_, i) => {
+          const lesson = getLesson(module.id, i + 1);
+          return `
+            <article class="card">
+              <span class="tag">LESSON ${i + 1}</span>
+              <h3>${escapeHtml(lesson.title)}</h3>
+              <p class="muted">${completed.includes(i + 1) ? "पूरा" : "अभी बाकी"}</p>
+              <a class="btn" href="lesson.html?module=${module.id}&lesson=${i + 1}">
+                लेसन खोलें
+              </a>
+            </article>`;
+        }).join("")}
+      </section>
+    </main>`;
+
+  bindLogout();
+});
+</script>
+</body>
+</html>
