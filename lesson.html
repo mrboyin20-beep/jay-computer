@@ -2,94 +2,482 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lesson | JAY COMPUTER ACADEMY</title>
-  <link rel="stylesheet" href="./style.css">
-  <style>
-    .lesson-page{max-width:850px;margin:auto;padding:40px 5%}
-    .lesson-panel{margin-top:20px;padding:26px;border:1px solid var(--border);border-radius:18px;background:var(--panel)}
-    .lesson-panel p,.lesson-panel li{font-size:14px;color:#c1cbe0;line-height:2}
-    .lesson-panel h2{font-size:20px;margin:20px 0 10px}
-    .lesson-panel ul{padding-left:22px}
-    .notice{margin-top:20px;padding:14px;border:1px solid #7887ff35;border-radius:12px;color:#c4ccff;font-size:12px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Lesson | JAY COMPUTER ACADEMY</title>
+<style>
+:root{--bg:#0b1220;--panel:#141f32;--panel2:#1b2a42;--text:#edf4ff;--muted:#aab8ce;--blue:#67a8ff;--green:#43d69b;--border:#2b3b54}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Noto Sans Devanagari",sans-serif;line-height:1.8}
+header{padding:18px 5%;background:#101b2d;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-size:19px;font-weight:bold;color:var(--blue)}
+header a{color:var(--text);text-decoration:none}
+main{max-width:950px;margin:auto;padding:24px 16px 55px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px;margin:16px 0}
+.tag{display:inline-block;background:#19375a;color:#a8d0ff;padding:4px 11px;border-radius:20px;font-size:13px}
+h1{font-size:clamp(25px,4vw,36px);line-height:1.4}
+h2{font-size:22px;color:var(--blue);margin-top:0}
+h3{font-size:18px;color:#b9d6ff}
+p,li{font-size:16px}
+.muted{color:var(--muted)}
+ul,ol{padding-left:24px}
+li{margin:7px 0}
+.callout{background:#102b2a;border-left:4px solid var(--green);padding:13px 16px;border-radius:8px;margin:15px 0}
+button{border:0;border-radius:10px;padding:13px 18px;background:var(--blue);color:#07111f;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.progress{height:8px;background:#29364a;border-radius:10px;overflow:hidden;margin:12px 0}
+.progress div{height:100%;width:0;background:var(--green);transition:width .3s}
+.option{display:flex;gap:10px;align-items:flex-start;padding:12px;margin:10px 0;background:var(--panel2);border:1px solid var(--border);border-radius:10px;cursor:pointer}
+.option input{margin-top:7px;accent-color:var(--blue)}
+.option:has(input:checked){border-color:var(--blue)}
+.question{padding:15px 0;border-bottom:1px solid var(--border)}
+#quizArea{display:none}
+#result{margin-top:18px}
+.small{font-size:13px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notice{color:#ffd28a}
+@media(max-width:600px){.card{padding:16px}header{padding:14px}p,li{font-size:15px}}
+</style>
 </head>
 <body>
-  <header class="navbar">
-    <a class="brand" href="./dashboard.html"><span class="brand-icon">J</span><span>JAY <b>COMPUTER</b><small>ACADEMY</small></span></a>
-    <a class="btn btn-outline" id="backLink" href="./courses.html">कोर्स पर लौटें</a>
-  </header>
-  <main class="lesson-page">
-    <span class="section-kicker">COURSE LESSON</span>
-    <h1 id="lessonTitle" style="margin-top:12px">लेसन</h1>
-    <div class="lesson-panel">
-      <h2>इस लेसन में क्या सीखेंगे?</h2>
-      <p id="lessonIntro">इस विषय का परिचय और उसके मुख्य बिंदु पढ़ें।</p>
-      <h2>मुख्य बिंदु</h2>
-      <ul>
-        <li>विषय का अर्थ और उपयोग समझें।</li>
-        <li>कंप्यूटर पर इस विषय से जुड़े उदाहरण देखें।</li>
-        <li>जो सीखा है, उसे कंप्यूटर पर अभ्यास करके जाँचें।</li>
-      </ul>
-      <div class="notice">यह शुरुआती लेसन टेम्पलेट है। वास्तविक विस्तृत नोट्स और अभ्यास के निर्देश अलग से जोड़े जाएँगे।</div>
-      <button class="btn btn-primary" id="completeButton" style="margin-top:22px">लेसन पूरा किया ✓</button>
-      <p id="status" role="status" style="margin-top:12px"></p>
+<header>
+  <div class="brand">🎓 JAY COMPUTER ACADEMY</div>
+  <a href="courses.html">← सभी कोर्स</a>
+</header>
+
+<main>
+  <div class="card">
+    <span class="tag">BASIC COMPUTER COURSE</span>
+    <h1 id="lessonTitle">लेसन लोड हो रहा है...</h1>
+    <p id="lessonSubtitle" class="muted">थ्योरी पढ़ें, प्रैक्टिकल करें और फिर क्विज़ दें।</p>
+    <div class="progress"><div id="progressBar"></div></div>
+    <p id="lessonCount" class="small muted"></p>
+  </div>
+
+  <div id="lessonContent"></div>
+
+  <div class="card" id="practiceCard">
+    <h2>💻 प्रैक्टिकल टास्क</h2>
+    <p>कंप्यूटर पर नीचे दिए गए काम खुद करके देखें। हर काम पूरा होने पर चेकबॉक्स चुनें।</p>
+    <div id="practiceList"></div>
+    <div class="callout">ध्यान दें: वेबसाइट चेकबॉक्स से आपकी प्रैक्टिकल गतिविधि की पुष्टि नहीं कर सकती। काम वास्तव में कंप्यूटर पर करके ही पूरा मानें।</div>
+    <button id="startQuiz">प्रैक्टिकल पूरा किया, क्विज़ शुरू करें →</button>
+  </div>
+
+  <section class="card" id="quizArea">
+    <span class="tag">LESSON TEST</span>
+    <h2>🧠 अब अपनी तैयारी जाँचें</h2>
+    <p class="muted">सभी प्रश्नों के उत्तर चुनें। पास होने के लिए कम से कम 70% अंक चाहिए। गलत होने पर दोबारा प्रयास कर सकते हैं।</p>
+    <form id="quizForm">
+      <div id="questions"></div>
+      <button type="submit">उत्तर जमा करें</button>
+    </form>
+    <div id="result"></div>
+  </section>
+
+  <div class="card">
+    <h2>📌 इस लेसन को याद रखें</h2>
+    <p>पहले थ्योरी समझें, फिर कंप्यूटर पर अभ्यास करें और अंत में क्विज़ देकर अपने ज्ञान की जाँच करें।</p>
+    <div class="actions">
+      <button class="secondary" id="prevBtn">← पिछला लेसन</button>
+      <button id="nextBtn" disabled>अगला लेसन →</button>
     </div>
-  </main>
+    <p class="small muted" id="saveStatus">लेसन पूरा करने और क्विज़ पास करने के बाद प्रोग्रेस सेव होगी।</p>
+  </div>
+</main>
 
-  <script type="module">
-    import { requireStudent } from "./app.js";
-    import { getCourse } from "./course-data.js";
-    import { db } from "./firebase.js";
-    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+<script type="module">
+import { requireStudent } from "./app.js";
+import { getCourse } from "./course-data.js";
+import { db } from "./firebase.js";
+import {
+  doc, getDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-    const session = await requireStudent();
+const $ = id => document.getElementById(id);
+let student;
+let course;
+let lessonIndex = 0;
+let passed = false;
 
-    if (session) {
-      const params = new URLSearchParams(location.search);
-      const course = getCourse(params.get("course"));
-      const index = Number(params.get("lesson"));
-      const title = course?.lessons[index];
-      const status = document.getElementById("status");
+const params = new URLSearchParams(location.search);
+const courseId = params.get("courseId") || params.get("course") || "computer-basics";
+lessonIndex = Number(params.get("index") ?? params.get("lesson") ?? 0);
+if (!Number.isFinite(lessonIndex) || lessonIndex < 0) lessonIndex = 0;
 
-      if (!course || !Number.isInteger(index) || !title) {
-        document.getElementById("lessonTitle").textContent = "लेसन नहीं मिला";
-        document.getElementById("completeButton").disabled = true;
-      } else {
-        document.title = title + " | JAY COMPUTER ACADEMY";
-        document.getElementById("lessonTitle").textContent = title;
-        document.getElementById("lessonIntro").textContent =
-          `${course.hindi} में "${title}" का परिचय पढ़ें और दिए गए बिंदुओं का अभ्यास करें।`;
-        document.getElementById("backLink").href =
-          `./course-details.html?id=${encodeURIComponent(course.id)}`;
+const lessons = [
+{
+title:"कंप्यूटर का परिचय",
+subtitle:"कंप्यूटर क्या है, कैसे काम करता है और कहाँ उपयोग होता है?",
+sections:[
+["1. कंप्यूटर क्या है?","कंप्यूटर एक इलेक्ट्रॉनिक मशीन है जो दिए गए निर्देशों के अनुसार डेटा स्वीकार करती है, उसे प्रोसेस करती है और परिणाम देती है। यह जानकारी को स्टोर भी कर सकता है। उदाहरण: Desktop, Laptop, ATM और अस्पताल में इस्तेमाल होने वाले कंप्यूटर।"],
+["2. कंप्यूटर कैसे काम करता है?","कंप्यूटर के काम करने की सामान्य प्रक्रिया को Input → Processing → Output → Storage से समझ सकते हैं। Input में डेटा दिया जाता है, Processing में CPU निर्देशों के अनुसार काम करता है, Output में परिणाम मिलता है और जरूरत पड़ने पर डेटा सेव होता है।"],
+["3. डेटा और सूचना","Data कच्चे तथ्य होते हैं, जैसे 40, 50 और 60। जब इनका औसत निकालकर 50 बताया जाए, तो यह उपयोगी Information बन जाती है।"],
+["4. कंप्यूटर के मुख्य उपयोग","शिक्षा, बैंकिंग, अस्पताल, रेलवे, सरकारी कार्यालय, दुकान, डिजाइन, संचार और मनोरंजन में कंप्यूटर का उपयोग होता है। स्कूल में परिणाम बनाना और दुकान में बिल बनाना इसके उदाहरण हैं।"],
+["5. कंप्यूटर की सीमाएँ","कंप्यूटर अपने आप इंसान की तरह सामान्य समझ नहीं रखता। वह दिए गए निर्देशों और उपलब्ध डेटा पर निर्भर करता है। गलत डेटा या गलत निर्देश से गलत परिणाम आ सकता है।"]
+],
+points:["कंप्यूटर डेटा स्वीकार करता है और निर्देशों के अनुसार प्रोसेस करता है।","CPU निर्देशों को प्रोसेस करने में महत्वपूर्ण भूमिका निभाता है।","कंप्यूटर परिणाम दिखाने के साथ डेटा सेव भी कर सकता है।"],
+tasks:["कंप्यूटर के कम से कम पाँच उपयोग लिखें।","किसी एक उदाहरण को Input, Processing और Output में बाँटें।","Desktop या Laptop के पाँच हिस्सों को पहचानें।"],
+quiz:[
+["कंप्यूटर का मुख्य कार्य क्या है?",["केवल गाना बजाना","डेटा प्रोसेस करके परिणाम देना","केवल प्रिंट करना","केवल इंटरनेट चलाना"],1],
+["Input का उदाहरण कौन-सा है?",["मॉनिटर पर परिणाम","कीबोर्ड से टाइप करना","प्रिंट हुआ कागज","स्पीकर की आवाज"],1],
+["कच्चे तथ्यों को क्या कहा जाता है?",["डेटा","आउटपुट","प्रिंटर","सॉफ्टवेयर"],0],
+["कंप्यूटर को निर्देश कौन देता है?",["केवल मॉनिटर","प्रोग्राम या उपयोगकर्ता के निर्देश","केवल स्पीकर","केवल प्रिंटर"],1],
+["कंप्यूटर की एक सीमा क्या है?",["वह डेटा प्रोसेस नहीं करता","वह बिजली पर कभी निर्भर नहीं होता","गलत निर्देश से गलत परिणाम दे सकता है","वह डेटा स्टोर नहीं कर सकता"],2]
+]},
+{
+title:"कंप्यूटर की विशेषताएँ और सीमाएँ",
+subtitle:"Speed, Accuracy, Storage और Automation को समझें।",
+sections:[
+["1. गति (Speed)","कंप्यूटर बहुत कम समय में बड़ी मात्रा में गणना कर सकता है। इसलिए बैंकिंग, बिलिंग और वैज्ञानिक कार्यों में इसका उपयोग होता है।"],
+["2. शुद्धता (Accuracy)","सही डेटा और सही निर्देश मिलने पर कंप्यूटर सामान्यतः बहुत सटीक परिणाम देता है। गलत इनपुट मिलने पर परिणाम भी गलत हो सकता है। इसे GIGO यानी Garbage In, Garbage Out से समझते हैं।"],
+["3. स्टोरेज क्षमता (Storage)","कंप्यूटर फाइलें, फोटो, वीडियो और दस्तावेज सेव कर सकता है। सेव किया गया डेटा बाद में फिर खोला जा सकता है।"],
+["4. स्वचालन (Automation)","एक बार सही निर्देश और प्रक्रिया तय हो जाए तो कंप्यूटर कई कार्य अपने आप कर सकता है। उदाहरण: तय नियमों से मार्कशीट में कुल अंक निकालना।"],
+["5. अन्य विशेषताएँ और सीमाएँ","कंप्यूटर लगातार एक जैसे कार्य कर सकता है और नेटवर्क से जानकारी साझा कर सकता है। लेकिन उसे बिजली, सही निर्देश, सुरक्षा और रखरखाव की जरूरत होती है।"]
+],
+points:["Speed का अर्थ तेजी से काम करना है।","Accuracy सही इनपुट और निर्देशों पर निर्भर करती है।","Storage में फाइलें भविष्य के लिए रखी जाती हैं।","GIGO का अर्थ गलत इनपुट से गलत परिणाम हो सकता है।"],
+tasks:["कंप्यूटर की पाँच विशेषताएँ कॉपी में लिखें।","गलत डेटा से गलत परिणाम का एक उदाहरण बनाएँ।","कंप्यूटर के दो फायदे और दो सीमाएँ लिखें।"],
+quiz:[
+["Accuracy का अर्थ क्या है?",["गति","शुद्धता","स्टोरेज","आवाज"],1],
+["GIGO का सही विचार क्या है?",["गलत इनपुट से गलत परिणाम हो सकता है","कंप्यूटर हमेशा सही होता है","डेटा सेव नहीं होता","कंप्यूटर बंद नहीं होता"],0],
+["फाइलों को भविष्य के लिए रखना क्या कहलाता है?",["Input","Storage","Output","Printing"],1],
+["Automation का उदाहरण क्या है?",["हर गणना हाथ से करना","नियम के अनुसार कुल अंक अपने आप निकालना","मॉनिटर साफ करना","कंप्यूटर बंद रखना"],1],
+["कंप्यूटर की एक आवश्यकता क्या है?",["कभी निर्देश न मिलें","बिजली और सही निर्देश","केवल कागज","केवल प्रिंटर"],1]
+]},
+{
+title:"कंप्यूटर के प्रकार",
+subtitle:"Desktop से Supercomputer तक अलग-अलग कंप्यूटर पहचानें।",
+sections:[
+["1. Desktop Computer","Desktop आमतौर पर मेज पर रखा जाता है। इसमें मॉनिटर, कीबोर्ड, माउस और सिस्टम यूनिट हो सकते हैं। इसका उपयोग कार्यालय, स्कूल और घर में होता है।"],
+["2. Laptop और Tablet","Laptop पोर्टेबल कंप्यूटर है जिसमें स्क्रीन, कीबोर्ड और टचपैड एक साथ होते हैं। Tablet आमतौर पर टचस्क्रीन से चलाया जाता है और यात्रा में उपयोगी है।"],
+["3. Smartphone","Smartphone एक छोटा पोर्टेबल डिजिटल उपकरण है जो ऐप, इंटरनेट, कैमरा और संचार जैसी सुविधाएँ देता है। इसमें कंप्यूटिंग की अनेक क्षमताएँ होती हैं।"],
+["4. Mainframe Computer","Mainframe का उपयोग बड़ी संस्थाओं में बहुत सारे रिकॉर्ड और एक साथ कई उपयोगकर्ताओं के कार्य संभालने के लिए किया जाता है, जैसे बड़े बैंकिंग सिस्टम।"],
+["5. Supercomputer","Supercomputer अत्यधिक जटिल और बड़े वैज्ञानिक हिसाब-किताब के लिए बनाया जाता है, जैसे मौसम मॉडलिंग और वैज्ञानिक अनुसंधान।"]
+],
+points:["Desktop एक जगह रखकर इस्तेमाल किया जाता है।","Laptop और Tablet को आसानी से साथ ले जाया जा सकता है।","Mainframe बड़े संस्थागत काम संभाल सकता है।","Supercomputer जटिल गणनाओं में इस्तेमाल होता है।"],
+tasks:["Desktop और Laptop के तीन अंतर लिखें।","अपने आसपास दिखने वाले पाँच डिजिटल उपकरणों के नाम लिखें।","Mainframe और Supercomputer के उपयोगों के उदाहरण लिखें।"],
+quiz:[
+["कौन-सा कंप्यूटर आसानी से साथ ले जाया जा सकता है?",["Laptop","केवल Desktop टावर","प्रिंटर","UPS"],0],
+["टचस्क्रीन पर केंद्रित उपकरण कौन-सा है?",["Tablet","सिस्टम यूनिट","मॉनिटर स्टैंड","कीबोर्ड"],0],
+["बड़े बैंकिंग रिकॉर्ड संभालने में किसका उपयोग हो सकता है?",["Mainframe","माउस","स्कैनर","वेबकैम"],0],
+["वैज्ञानिक जटिल गणनाओं के लिए क्या उपयोगी है?",["Supercomputer","स्पीकर","कीबोर्ड","पेन ड्राइव ही"],0],
+["Desktop आम तौर पर कहाँ रखा जाता है?",["मेज पर","जेब में","कलाई पर","कान पर"],0]
+]},
+{
+title:"हार्डवेयर और सॉफ्टवेयर",
+subtitle:"कंप्यूटर के छूने योग्य भाग और प्रोग्राम पहचानें।",
+sections:[
+["1. हार्डवेयर (Hardware)","कंप्यूटर के वे भौतिक हिस्से जिन्हें देखा और छुआ जा सकता है, हार्डवेयर कहलाते हैं। उदाहरण: मॉनिटर, माउस, कीबोर्ड, मदरबोर्ड और SSD।"],
+["2. सॉफ्टवेयर (Software)","सॉफ्टवेयर निर्देशों और प्रोग्रामों का समूह है जो कंप्यूटर को काम करने के लिए बताता है। उदाहरण: Windows, Calculator, Notepad और वेब ब्राउज़र।"],
+["3. CPU","CPU यानी Central Processing Unit निर्देशों को प्रोसेस करता है। इसे अक्सर कंप्यूटर का मुख्य प्रोसेसिंग भाग कहा जाता है। CPU सिस्टम यूनिट के अंदर होता है।"],
+["4. RAM और ROM","RAM काम करते समय डेटा रखने वाली अस्थायी मेमोरी है। बिजली बंद होने पर RAM का सामान्य डेटा मिट जाता है। ROM गैर-वाष्पशील मेमोरी का प्रकार है, जिसका डेटा सामान्यतः बिजली बंद होने पर बना रहता है।"],
+["5. मदरबोर्ड और स्टोरेज","Motherboard मुख्य सर्किट बोर्ड है जो कई घटकों को जोड़ता है। HDD और SSD फाइलें लंबे समय के लिए सेव करते हैं। SSD सामान्यतः HDD से तेज हो सकता है।"],
+["6. ऑपरेटिंग सिस्टम","Operating System हार्डवेयर और एप्लिकेशन के बीच काम संभालता है। Windows, Linux, Android और macOS इसके उदाहरण हैं।"]
+],
+points:["Hardware भौतिक भाग हैं।","Software प्रोग्राम और निर्देश हैं।","CPU निर्देशों को प्रोसेस करता है।","RAM सामान्यतः अस्थायी मेमोरी है।","SSD/HDD डेटा को लंबे समय के लिए स्टोर करते हैं।"],
+tasks:["कम से कम पाँच हार्डवेयर और पाँच सॉफ्टवेयर के नाम लिखें।","अपने कंप्यूटर में ऑपरेटिंग सिस्टम का नाम पता करें।","CPU, RAM और स्टोरेज के कामों में अंतर लिखें।"],
+quiz:[
+["इनमें से हार्डवेयर कौन है?",["Windows","माउस","Calculator ऐप","Notepad"],1],
+["CPU का पूरा नाम क्या है?",["Central Processing Unit","Computer Print Utility","Central Power User","Control Program Unit"],0],
+["RAM में रखा सामान्य डेटा बिजली बंद होने पर क्या होता है?",["हमेशा बना रहता है","मिट जाता है","प्रिंट हो जाता है","इंटरनेट पर चला जाता है"],1],
+["इनमें से ऑपरेटिंग सिस्टम कौन है?",["Windows","कीबोर्ड","मॉनिटर","SSD"],0],
+["फाइलों को लंबे समय तक रखने के लिए क्या उपयोग होता है?",["SSD या HDD","केवल RAM","माउस","CPU फैन"],0]
+]},
+{
+title:"इनपुट और आउटपुट डिवाइस",
+subtitle:"कंप्यूटर को डेटा देने और परिणाम पाने वाले उपकरण।",
+sections:[
+["1. Input Device","Input device से कंप्यूटर में डेटा या निर्देश दिए जाते हैं। Keyboard से टेक्स्ट, Mouse से चयन, Scanner से कागजी दस्तावेज का डिजिटल रूप और Microphone से आवाज इनपुट की जा सकती है।"],
+["2. Keyboard","Keyboard पर अक्षर, अंक, फंक्शन और नियंत्रण कीज होती हैं। Enter आदेश की पुष्टि कर सकता है, Backspace बाईं ओर का अक्षर मिटाता है और Spacebar शब्दों के बीच खाली जगह देता है।"],
+["3. Mouse","Mouse से स्क्रीन पर पॉइंटर चलाते हैं। Single click चयन के लिए, Double click फाइल या प्रोग्राम खोलने के लिए और Right click विकल्प देखने के लिए होता है।"],
+["4. Output Device","Output device परिणाम दिखाता या सुनाता है। Monitor दृश्य परिणाम दिखाता है, Printer कागज पर प्रिंट करता है और Speaker आवाज देता है।"],
+["5. Input/Output दोनों","कुछ उपकरण डेटा भेज भी सकते हैं और प्राप्त भी कर सकते हैं। Touchscreen पर स्क्रीन परिणाम दिखाती है और स्पर्श इनपुट लेता है। Network adapter भी डेटा भेजने और प्राप्त करने में सक्षम होता है।"]
+],
+points:["Keyboard और Mouse इनपुट डिवाइस हैं।","Monitor, Printer और Speaker आउटपुट डिवाइस हैं।","Touchscreen इनपुट और आउटपुट दोनों देता है।"],
+tasks:["अपने कंप्यूटर के इनपुट और आउटपुट उपकरणों की सूची बनाएं।","माउस से Single click, Double click और Right click का अभ्यास करें।","Notepad खोलकर अपना नाम टाइप करें और Enter दबाएँ।"],
+quiz:[
+["टेक्स्ट टाइप करने के लिए क्या उपयोग होता है?",["Keyboard","Speaker","Printer","Monitor"],0],
+["कागज पर दस्तावेज निकालने वाला उपकरण कौन है?",["Scanner","Printer","Mouse","Microphone"],1],
+["आवाज इनपुट करने के लिए क्या उपयोग होता है?",["Microphone","Monitor","Speaker","Projector"],0],
+["Double click का सामान्य उपयोग क्या है?",["फाइल खोलना","कंप्यूटर की बिजली काटना","प्रिंट पेपर डालना","स्क्रीन साफ करना"],0],
+["कौन-सा उपकरण इनपुट और आउटपुट दोनों दे सकता है?",["Touchscreen","साधारण Speaker","साधारण Printer","साधारण Keyboard"],0]
+]},
+{
+title:"मेमोरी और स्टोरेज",
+subtitle:"Bit, Byte, KB, MB, GB, TB तथा RAM और ROM का अंतर।",
+sections:[
+["1. Bit और Byte","Bit डिजिटल जानकारी की सबसे छोटी सामान्य इकाई है। एक Byte में 8 bits होते हैं। टेक्स्ट, फोटो और फाइलों का आकार बताने के लिए बड़ी इकाइयाँ उपयोग होती हैं।"],
+["2. KB, MB, GB और TB","सामान्य कंप्यूटर पढ़ाई में 1 KB को लगभग 1024 Bytes, 1 MB को 1024 KB और 1 GB को 1024 MB के रूप में पढ़ाया जाता है। वास्तविक स्टोरेज उत्पादों में दशमलव इकाइयों का उपयोग भी होता है।"],
+["3. Primary Memory","RAM और ROM को प्राथमिक मेमोरी के उदाहरण के रूप में पढ़ाया जाता है। RAM चालू काम के लिए अस्थायी जगह देती है। ROM गैर-वाष्पशील होती है और फर्मवेयर जैसे उपयोगों में मिल सकती है।"],
+["4. Secondary Storage","HDD, SSD, Memory Card और Pen Drive डेटा सेव करने के साधन हैं। इनमें फाइलें बिजली बंद होने के बाद भी सामान्यतः सुरक्षित रहती हैं, जब तक उन्हें मिटाया या नुकसान न पहुँचे।"],
+["5. RAM बनाम Storage","ज्यादा RAM से कई प्रोग्राम एक साथ चलाने में मदद मिल सकती है। ज्यादा SSD/HDD क्षमता से ज्यादा फाइलें सेव कर सकते हैं। दोनों का काम अलग है।"]
+],
+points:["8 bits = 1 Byte।","GB, MB से बड़ी इकाई है।","RAM सामान्यतः अस्थायी मेमोरी है।","SSD, HDD और Pen Drive डेटा सेव करते हैं।"],
+tasks:["Bit से TB तक इकाइयों को छोटे से बड़े क्रम में लिखें।","RAM और SSD के बीच तीन अंतर लिखें।","अपने कंप्यूटर की RAM और ड्राइव की क्षमता देखें।"],
+quiz:[
+["एक Byte में कितने bits होते हैं?",["4","8","16","100"],1],
+["इनमें से बड़ी इकाई कौन है?",["KB","Byte","GB","Bit"],2],
+["कौन-सी मेमोरी सामान्यतः अस्थायी है?",["RAM","SSD","Pen Drive","HDD"],0],
+["इनमें से स्टोरेज डिवाइस कौन है?",["SSD","CPU","Mouse","Speaker"],0],
+["RAM और स्टोरेज में क्या अंतर है?",["दोनों बिल्कुल एक ही हैं","RAM चालू काम में मदद करती है, स्टोरेज फाइलें रखता है","SSD केवल आवाज देता है","RAM कागज प्रिंट करती है"],1]
+]},
+{
+title:"Windows और Desktop की जानकारी",
+subtitle:"Desktop, Icons, Taskbar, Start Menu और Settings समझें।",
+sections:[
+["1. Windows क्या है?","Windows Microsoft का एक Operating System है। यह फाइलें, एप्लिकेशन, उपकरण और उपयोगकर्ता के काम को व्यवस्थित करने में मदद करता है।"],
+["2. Desktop","Windows में लॉगिन के बाद दिखाई देने वाली मुख्य स्क्रीन को Desktop कहा जाता है। यहाँ वॉलपेपर, Icons और Taskbar दिखाई दे सकते हैं।"],
+["3. Icons और Shortcuts","Icon किसी फाइल, फोल्डर या प्रोग्राम का दृश्य चिन्ह होता है। Shortcut किसी चीज तक जल्दी पहुँचने का रास्ता है। Shortcut हटाने से आम तौर पर मूल फाइल नहीं मिटती।"],
+["4. Taskbar और Start Menu","Taskbar में खुले प्रोग्राम, पिन किए गए ऐप और सिस्टम आइकन दिख सकते हैं। Start Menu से ऐप, सेटिंग और पावर विकल्प खोजे जा सकते हैं।"],
+["5. Settings और सुरक्षित Shutdown","Settings से Display, Network, Bluetooth और दूसरे विकल्प बदल सकते हैं। काम सेव करके Start Menu के Power विकल्प से Shut down चुनें। सीधे बिजली काटना डेटा नुकसान का कारण बन सकता है।"]
+],
+points:["Desktop मुख्य कार्य स्क्रीन है।","Taskbar खुले और पिन किए गए ऐप दिखा सकता है।","Start Menu से ऐप और पावर विकल्प मिलते हैं।","बंद करने से पहले अपना काम सेव करें।"],
+tasks:["Desktop पर तीन Icons पहचानें।","Start Menu खोलकर Notepad या Calculator खोजें।","Taskbar से किसी खुले प्रोग्राम पर जाएँ।","किसी खाली जगह पर Right click करके उपलब्ध विकल्प देखें।"],
+quiz:[
+["Windows क्या है?",["Operating System","Keyboard","Printer","केवल एक वेबसाइट"],0],
+["ऐप खोलने के विकल्प कहाँ मिल सकते हैं?",["Start Menu","केवल स्पीकर","माउस के अंदर","प्रिंटर पेपर में"],0],
+["Taskbar का उपयोग किस लिए होता है?",["खुले और पिन किए गए ऐप तक पहुँच","कागज काटना","बिजली बनाना","मॉनिटर साफ करना"],0],
+["काम बंद करने से पहले क्या करना चाहिए?",["काम सेव करना","सीधे बिजली काटना","सभी फाइलें मिटाना","कीबोर्ड निकालना"],0],
+["Shortcut सामान्यतः क्या करता है?",["किसी फाइल या ऐप तक जल्दी पहुँच देता है","हमेशा मूल फाइल मिटाता है","RAM को स्टोरेज बना देता है","इंटरनेट बंद करता है"],0]
+]},
+{
+title:"फाइल, फोल्डर और कीबोर्ड शॉर्टकट",
+subtitle:"फाइल बनाना, सेव करना, कॉपी-पेस्ट और व्यवस्थित करना सीखें।",
+sections:[
+["1. File और Folder","File में दस्तावेज, फोटो या अन्य डेटा रखा जाता है। Folder फाइलों और दूसरे फोल्डरों को व्यवस्थित रखने में मदद करता है। उदाहरण: Documents के अंदर ComputerCourse नाम का फोल्डर।"],
+["2. नया फोल्डर बनाना","File Explorer खोलें, जिस जगह फोल्डर बनाना है वहाँ जाएँ, खाली जगह पर Right click करें और New → Folder चुनें। नाम टाइप करके Enter दबाएँ। Windows के संस्करण के अनुसार मेनू थोड़ा अलग हो सकता है।"],
+["3. Rename, Copy और Cut","Rename से नाम बदलते हैं। Copy से मूल फाइल रखते हुए उसकी कॉपी बनाते हैं। Cut और Paste से फाइल को दूसरी जगह ले जा सकते हैं।"],
+["4. जरूरी Keyboard Shortcuts","Ctrl+C = Copy, Ctrl+X = Cut, Ctrl+V = Paste, Ctrl+S = Save, Ctrl+A = Select all, Ctrl+Z = Undo। Windows+E से File Explorer खुल सकता है।"],
+["5. Delete और Recycle Bin","Delete करने पर सामान्य फाइल अक्सर Recycle Bin में जाती है, जहाँ से Restore की जा सकती है। Shift+Delete सामान्यतः Recycle Bin को बायपास करता है, इसलिए इसका उपयोग सावधानी से करें। USB या नेटवर्क ड्राइव पर व्यवहार अलग हो सकता है।"],
+["6. फाइल सुरक्षित रखना","फाइलों को स्पष्ट नाम दें, सही फोल्डर में रखें और जरूरी दस्तावेजों का बैकअप रखें। अज्ञात फाइलें न खोलें और महत्वपूर्ण फाइल हटाने से पहले जाँच करें।"]
+],
+points:["Folder फाइलों को व्यवस्थित रखता है।","Ctrl+C Copy और Ctrl+V Paste के लिए है।","Ctrl+S सेव करने का सामान्य शॉर्टकट है।","Delete की गई फाइल Recycle Bin में हो सकती है।"],
+tasks:["Documents में BasicComputer नाम का फोल्डर बनाएँ।","उसके अंदर Practice नाम का दूसरा फोल्डर बनाएँ।","Notepad में अपना नाम लिखकर JayPractice.txt नाम से सेव करें।","फाइल की कॉपी बनाएँ और उसका नाम बदलें।","फाइल को Recycle Bin में भेजकर Restore करने का अभ्यास करें।"],
+quiz:[
+["नया फोल्डर बनाने का विकल्प सामान्यतः कहाँ मिलता है?",["File Explorer में New → Folder","Speaker Settings","Calculator में","Monitor के पीछे"],0],
+["Copy का शॉर्टकट क्या है?",["Ctrl+X","Ctrl+C","Ctrl+V","Ctrl+P"],1],
+["फाइल सेव करने का सामान्य शॉर्टकट क्या है?",["Ctrl+S","Ctrl+A","Ctrl+Z","Ctrl+E"],0],
+["Ctrl+Z का सामान्य काम क्या है?",["Undo","Print","Copy","Shutdown"],0],
+["फाइल Delete करने के बाद उसे वापस कहाँ पा सकते हैं?",["Recycle Bin","Taskbar के अंदर हमेशा","CPU में","Speaker में"],0]
+]}
+];
 
-        document.getElementById("completeButton").addEventListener("click", async () => {
-          const button = document.getElementById("completeButton");
-          button.disabled = true;
-          status.textContent = "प्रोग्रेस सेव हो रही है...";
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
 
-          try {
-            const recordId = `${course.id}_${index}`;
-            await setDoc(
-              doc(db, "users", session.user.uid, "completedLessons", recordId),
-              {
-                courseId: course.id,
-                lessonIndex: index,
-                lessonTitle: title,
-                completedAt: serverTimestamp()
-              }
-            );
-            status.textContent = "लेसन पूरा होने की प्रोग्रेस सेव हो गई।";
-            button.textContent = "पूरा किया गया ✓";
-          } catch (error) {
-            console.error(error);
-            status.textContent = "सेव नहीं हुआ। Firebase Firestore Rules जाँचें।";
-            button.disabled = false;
-          }
-        });
-      }
-    }
-  </script>
+function lessonData() {
+  const title = lessons[lessonIndex];
+  if (courseId !== "computer-basics") return null;
+  return title || null;
+}
+
+function getLessonList() {
+  return course?.lessons || [];
+}
+
+function getTitle(data) {
+  const entry = getLessonList()[lessonIndex];
+  if (typeof entry === "string") return entry;
+  return entry?.title || entry?.name || data?.title || `लेसन ${lessonIndex + 1}`;
+}
+
+function renderLesson(data) {
+  $("lessonTitle").textContent = getTitle(data);
+  $("lessonSubtitle").textContent = data?.subtitle || "थ्योरी पढ़ें, प्रैक्टिकल करें और क्विज़ दें।";
+  $("lessonCount").textContent = `लेसन ${lessonIndex + 1} / ${getLessonList().length || lessons.length}`;
+  $("progressBar").style.width = `${((lessonIndex + 1) / (getLessonList().length || lessons.length)) * 100}%`;
+
+  if (!data) {
+    $("lessonContent").innerHTML = `
+      <div class="card">
+        <h2>यह लेसन अभी तैयार नहीं है</h2>
+        <p>इस पेज में अभी Basic Computer Course के 8 विस्तृत लेसन जोड़े गए हैं। बाकी कोर्स के लिए उनकी अलग थ्योरी और क्विज़ तैयार करनी होगी।</p>
+        <a href="courses.html">कोर्स पर वापस जाएँ</a>
+      </div>`;
+    $("practiceCard").style.display = "none";
+    return;
+  }
+
+  $("lessonContent").innerHTML = `
+    <div class="card">
+      <h2>📖 विस्तृत थ्योरी</h2>
+      ${data.sections.map(([heading, body]) => `
+        <h3>${escapeHtml(heading)}</h3>
+        <p>${escapeHtml(body)}</p>`).join("")}
+    </div>
+    <div class="card">
+      <h2>⭐ मुख्य बातें</h2>
+      <ul>${data.points.map(point => `<li>${escapeHtml(point)}</li>`).join("")}</ul>
+    </div>`;
+
+  $("practiceList").innerHTML = data.tasks.map((task, i) => `
+    <label class="option">
+      <input type="checkbox" class="taskCheck" value="${i}">
+      <span>${escapeHtml(task)}</span>
+    </label>`).join("");
+
+  $("startQuiz").disabled = false;
+}
+
+async function loadProgress() {
+  const ref = doc(db, "users", student.uid, "completedLessons", `${courseId}_${lessonIndex}`);
+  const snap = await getDoc(ref);
+  if (snap.exists() && snap.data().passed === true) {
+    passed = true;
+    $("nextBtn").disabled = false;
+    $("saveStatus").textContent = "✅ यह लेसन पहले ही पूरा हो चुका है।";
+  }
+}
+
+function renderQuiz(data) {
+  $("questions").innerHTML = data.quiz.map((q, qi) => `
+    <div class="question">
+      <h3>${qi + 1}. ${escapeHtml(q[0])}</h3>
+      ${q[1].map((answer, ai) => `
+        <label class="option">
+          <input type="radio" name="q${qi}" value="${ai}" required>
+          <span>${escapeHtml(answer)}</span>
+        </label>`).join("")}
+    </div>`).join("");
+  $("result").innerHTML = "";
+}
+
+
+function openQuiz() {
+  const data = lessonData();
+  if (!data) return;
+
+  const quizArea = $("quizArea");
+
+  // क्विज़ पहले से खुला है तो दोबारा न खोलें
+  if (quizArea.style.display === "block") return;
+
+  quizArea.style.display = "block";
+  renderQuiz(data);
+  quizArea.scrollIntoView({ behavior: "smooth" });
+}
+
+// सभी प्रैक्टिकल टास्क चेक होते ही क्विज़ अपने आप खुलेगा
+document.addEventListener("change", event => {
+  if (!event.target.classList.contains("taskCheck")) return;
+
+  const tasks = [...document.querySelectorAll(".taskCheck")];
+
+  if (tasks.length > 0 && tasks.every(task => task.checked)) {
+    openQuiz();
+  }
+});
+
+// बटन से भी क्विज़ शुरू कर सकते हैं
+$("startQuiz").addEventListener("click", () => {
+  const tasks = [...document.querySelectorAll(".taskCheck")];
+
+  if (tasks.length > 0 && !tasks.every(task => task.checked)) {
+    alert("पहले सभी प्रैक्टिकल टास्क पूरे करके चेकबॉक्स चुनें।");
+    return;
+  }
+
+  openQuiz();
+});
+
+
+$("quizForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const data = lessonData();
+  if (!data) return;
+
+  const form = new FormData(event.currentTarget);
+  let score = 0;
+  data.quiz.forEach((q, i) => {
+    if (Number(form.get(`q${i}`)) === q[2]) score++;
+  });
+
+  const percent = Math.round(score / data.quiz.length * 100);
+  const didPass = percent >= 70;
+  $("result").innerHTML = `
+    <div class="callout">
+      <h3>${didPass ? "🎉 बधाई! क्विज़ पास हो गया।" : "📚 अभी अभ्यास की जरूरत है।"}</h3>
+      <p>आपके अंक: <strong>${score}/${data.quiz.length} (${percent}%)</strong></p>
+      <p>${didPass ? "लेसन पूरा सेव किया जा रहा है।" : "थ्योरी दोबारा पढ़ें और फिर प्रयास करें।"}</p>
+      ${!didPass ? '<button type="button" id="retryQuiz" class="secondary">दोबारा क्विज़ दें</button>' : ""}
+    </div>`;
+  if (!didPass) {
+    $("retryQuiz").addEventListener("click", () => renderQuiz(data));
+    return;
+  }
+
+  try {
+    const ref = doc(db, "users", student.uid, "completedLessons", `${courseId}_${lessonIndex}`);
+    await setDoc(ref, {
+      courseId,
+      lessonIndex,
+      lessonTitle: getTitle(data),
+      passed: true,
+      quizScore: score,
+      totalQuestions: data.quiz.length,
+      percentage: percent,
+      completedAt: serverTimestamp()
+    }, {merge:true});
+
+    passed = true;
+    $("nextBtn").disabled = false;
+    $("saveStatus").textContent = "✅ लेसन और क्विज़ रिजल्ट Firebase में सेव हो गया।";
+    $("result").innerHTML += `<p>अब तुम अगला लेसन शुरू कर सकते हो।</p>`;
+  } catch (error) {
+    console.error(error);
+    $("saveStatus").textContent = "क्विज़ पास हुआ, लेकिन प्रोग्रेस सेव नहीं हो सकी। Firebase Firestore Rules जाँचें।";
+    $("result").innerHTML += `<p class="notice">डेटा सेव नहीं हुआ। इंटरनेट और Firestore Rules जाँचकर फिर क्विज़ जमा करें।</p>`;
+  }
+});
+
+$("prevBtn").addEventListener("click", () => {
+  if (lessonIndex <= 0) {
+    location.href = "courses.html";
+    return;
+  }
+  location.href = `lesson.html?courseId=${encodeURIComponent(courseId)}&index=${lessonIndex - 1}`;
+});
+
+$("nextBtn").addEventListener("click", () => {
+  if (!passed) return;
+  const total = getLessonList().length || lessons.length;
+  if (lessonIndex + 1 < total) {
+    location.href = `lesson.html?courseId=${encodeURIComponent(courseId)}&index=${lessonIndex + 1}`;
+  } else {
+    location.href = `course-details.html?courseId=${encodeURIComponent(courseId)}`;
+  }
+});
+
+try {
+  student = await requireStudent();
+  if (!student?.uid) throw new Error("Student login required");
+
+  course = getCourse(courseId);
+  if (!course) {
+    $("lessonTitle").textContent = "कोर्स नहीं मिला";
+    $("lessonContent").innerHTML = '<div class="card">कोर्स की जानकारी नहीं मिली। <a href="courses.html">वापस जाएँ</a></div>';
+    $("practiceCard").style.display = "none";
+  } else {
+    const data = lessonData();
+    renderLesson(data);
+    if (data) await loadProgress();
+  }
+} catch (error) {
+  console.error(error);
+  $("lessonTitle").textContent = "लेसन खोलने में समस्या";
+  $("lessonContent").innerHTML = `
+    <div class="card">
+      <p>कृपया स्टूडेंट के रूप में लॉगिन करें और फिर लेसन खोलें।</p>
+      <p class="muted small">समस्या बनी रहे तो app.js में requireStudent() और Firebase लॉगिन जाँचें।</p>
+      <a href="login.html">लॉगिन पेज खोलें</a>
+    </div>`;
+  $("practiceCard").style.display = "none";
+}
+</script>
 </body>
 </html>
